@@ -1,0 +1,7 @@
+requests
+pandas
+numpy
+rich
+typer
+scipy
+yfinance
