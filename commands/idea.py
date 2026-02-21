@@ -1,15 +1,21 @@
-from utils.formatting import print_header, console
+import streamlit as st
 from engines.historical_engine import find_analog
 from api.yahoo import get_price_history
+from utils.time import get_pst_time
 
 def execute_idea(theme: str):
-    print_header(f"TRADE IDEA GENERATOR: {theme.upper()}")
+    st.header(f"TRADE IDEA GENERATOR: {theme.upper()}")
+    st.caption(get_pst_time())
+    
     if theme.upper() == "SPY":
-        df = get_price_history("SPY", period="3mo", interval="1d")
-        if not df.empty:
-            trend = df['Close'].pct_change().dropna().tolist()
-            analog = find_analog("SPY", trend)
-            console.print(f"Nearest Historical Analog for SPY: [bold magenta]{analog}[/bold magenta]")
+        with st.spinner("Analyzing historical analogs..."):
+            df = get_price_history("SPY", period="3mo", interval="1d")
+            if not df.empty:
+                trend = df['Close'].pct_change().dropna().tolist()
+                analog = find_analog("SPY", trend)
+                st.success(f"Nearest Historical Analog for SPY: **{analog}**")
+            else:
+                st.warning("Could not fetch SPY data for analog analysis.")
     else:
-        console.print(f"Generating thesis for theme: [bold]{theme}[/bold]...")
-        console.print("Recommend checking /scenario and /poly for convergence.")
+        st.info(f"Generating thesis for theme: **{theme}**...")
+        st.write("Recommend checking Scenario and Polymarket tabs for convergence.")

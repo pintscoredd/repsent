@@ -1,12 +1,21 @@
-from utils.formatting import print_header, console
+import streamlit as st
 from api.news import get_top_news
+from utils.time import get_pst_time
 
 def execute_sentiment():
-    print_header("MACRO SENTIMENT ANALYSIS")
-    articles = get_top_news("global macro markets")
-    if not articles:
-        return
-        
-    for i, a in enumerate(articles[:5], 1):
-        console.print(f"[bold white]{i}. {a.get('title')}[/bold white]")
-        console.print(f"[dim]{a.get('source', {}).get('name')} - {a.get('publishedAt')}[/dim]\n")
+    st.header("MACRO SENTIMENT ANALYSIS")
+    st.caption(get_pst_time())
+    
+    with st.spinner("Fetching macro news..."):
+        try:
+            articles = get_top_news("global macro markets")
+            if not articles:
+                st.warning("No news articles found.")
+                return
+                
+            for i, a in enumerate(articles[:5], 1):
+                st.markdown(f"**{i}. {a.get('title')}**")
+                st.caption(f"{a.get('source', {}).get('name')} - {a.get('publishedAt')}")
+                st.divider()
+        except Exception as e:
+            st.error(f"Error fetching sentiment: {e}")

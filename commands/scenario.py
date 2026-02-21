@@ -1,8 +1,11 @@
-from utils.formatting import print_header, console
+import streamlit as st
 from engines.ripple_engine import compute_ripple_effects
+from utils.time import get_pst_time
 
 def execute_scenario(event: str):
-    print_header(f"SCENARIO ANALYSIS: {event.upper()}")
+    st.header(f"SCENARIO ANALYSIS: {event.upper()}")
+    st.caption(get_pst_time())
+    
     ripples = compute_ripple_effects(event)
     for r in ripples:
-        console.print(f"[bold cyan]{r}[/bold cyan]")
+        st.info(r)
